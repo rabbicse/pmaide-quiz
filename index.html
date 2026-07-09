@@ -141,7 +141,7 @@ li{margin:.22em 0}
       <div class="mode-card">
         <div class="eyebrow">Practice</div>
         <h3 style="margin:0">Topic drill</h3>
-        <p class="small muted" style="margin:0">Untimed. Instant feedback with an explanation after every answer. Wrong answers come back first. <strong>449 curated questions</strong> + <strong>123 generator templates</strong> covering every syllabus area (5,000–9,500+ distinct questions per topic, answers computed at runtime) — the drills never run out.</p>
+        <p class="small muted" style="margin:0">Untimed. Instant feedback with an explanation after every answer. Wrong answers come back first. <strong>491 curated questions</strong> + <strong>139 generator templates</strong> covering every syllabus area (5,000–9,500+ distinct questions per topic, answers computed at runtime) — the drills never run out.</p>
         <div class="eyebrow" style="margin-top:8px">Topic</div>
         <div class="chips" id="topic-chips"></div>
         <div class="eyebrow" style="margin-top:8px">Source</div>
@@ -199,7 +199,7 @@ li{margin:.22em 0}
 'use strict';
 /* ================= TOPICS & EXAM ================= */
 const EXAM_DATE = new Date('2026-07-24T10:00:00');
-const TOPICS = { iq:'Analytical / IQ', math:'Math & Statistics', c:'C / C++', java:'Java',
+const TOPICS = { iq:'Analytical / IQ', math:'Math & Statistics', c:'C / C++', java:'Java', py:'Python',
                  dsa:'Data Structures', cx:'Complexity & Algorithms', db:'DBMS' };
 const MOCK_MIX = { iq:8, math:12, c:7, java:3, dsa:6, cx:4, db:10 }; // = 50
 
@@ -722,7 +722,54 @@ const Q = [
 {id:'x396',t:'cx',src:'extra',q:'After k full rounds of Bellman–Ford, which distances are guaranteed correct?',o:['All of them','Those whose shortest path uses at most k EDGES','Those within k of the source alphabetically','None until round V−1'],a:1,e:'That is the DP invariant — and why V−1 rounds (max edges in a simple path) always finish the job.'},
 {id:'x397',t:'cx',src:'extra',q:'You only need the distance to ONE target t. Dijkstra may:',o:['Not be used','STOP as soon as t is settled — its distance is final by the invariant','Skip the priority queue','Run backwards only'],a:1,e:'Settled = final. Early termination at the target is a correct and common optimization.'},
 {id:'x398',t:'cx',src:'extra',q:'The path between u and v INSIDE a minimum spanning tree:',o:['Is always the shortest u-v path','May be LONGER than the shortest u-v path in the graph','Does not exist','Equals Dijkstra’s output'],a:1,e:'MST minimizes TOTAL tree weight, not per-pair distances. Classic: triangle with weights 2,2,3 — MST keeps the two 2s; the 3-edge pair’s tree path costs 4 > 3.'},
-{id:'x399',t:'cx',src:'extra',q:'On graphs with negative edges: Dijkstra ______, while Bellman–Ford ______.',o:['detects them; ignores them','may silently return WRONG answers; computes correct answers (and detects negative cycles)','crashes; crashes','is faster; is wrong'],a:1,e:'Silent wrongness is the danger — Dijkstra gives no error, just bad distances. BF is the safe (slower) choice.'}
+{id:'x399',t:'cx',src:'extra',q:'On graphs with negative edges: Dijkstra ______, while Bellman–Ford ______.',o:['detects them; ignores them','may silently return WRONG answers; computes correct answers (and detects negative cycles)','crashes; crashes','is faster; is wrong'],a:1,e:'Silent wrongness is the danger — Dijkstra gives no error, just bad distances. BF is the safe (slower) choice.'},
+
+/* ---- HARD SET: dynamic programming ---- */
+{id:'x400',t:'cx',src:'extra',q:'Memoization and tabulation differ in that memoization is:',o:['Bottom-up table filling','Top-down recursion with a cache, computing only needed states','Always faster','Greedy'],a:1,e:'Tabulation fills the whole table iteratively bottom-up. Same answers, same asymptotics; different mechanics.'},
+{id:'x401',t:'cx',src:'extra',q:'You climb 5 stairs taking 1 or 2 steps at a time. Number of distinct ways:',o:['5','8','13','16'],a:1,e:'ways(n)=ways(n−1)+ways(n−2); 1,2,3,5,8 → Fibonacci in disguise.'},
+{id:'x402',t:'cx',src:'extra',q:'Paths from top-left to bottom-right of a 3×3 grid moving only right/down:',o:['4','6','9','12'],a:1,e:'dp[i][j]=dp[i−1][j]+dp[i][j−1], or directly C(m+n−2, m−1) = C(4,2) = 6.'},
+{id:'x403',t:'cx',src:'extra',q:'Minimum coins from {1, 3, 4} to make 6:',o:['1','2','3','4'],a:1,e:'dp: 3+3 = two coins. This instance exists to kill greedy (see next question).'},
+{id:'x404',t:'cx',src:'extra',q:'For coins {1, 3, 4} and amount 6, GREEDY (largest first) gives ______ coins while DP gives ______:',o:['2; 2','3 (4+1+1); 2 (3+3)','2; 3','4; 3'],a:1,e:'The canonical greedy-killer. Greedy works only for canonical systems (1/5/10/25); arbitrary coin sets need DP.'},
+{id:'x405',t:'cx',src:'extra',q:'The length of the LCS of "AGGTAB" and "GXTXAYB" is:',o:['3','4','5','6'],a:1,e:'LCS = "GTAB" → 4. Fill the classic table: match → diag+1, else max(up,left).'},
+{id:'x406',t:'cx',src:'extra',q:'The edit distance (insert/delete/replace) from "kitten" to "sitting" is:',o:['2','3','4','5'],a:1,e:'k→s (replace), e→i (replace), append g (insert) = 3. The standard example.'},
+{id:'x407',t:'cx',src:'extra',q:'Length of the Longest Increasing Subsequence of [10, 9, 2, 5, 3, 7, 101, 18]:',o:['3','4','5','6'],a:1,e:'e.g. 2, 3, 7, 18. O(n²) DP or O(n log n) patience sorting.'},
+{id:'x408',t:'cx',src:'extra',q:'Maximum subarray sum of [−2, 1, −3, 4, −1, 2, 1, −5, 4] (Kadane):',o:['4','6','7','10'],a:1,e:'best_here = max(x, best_here + x); the winning window is [4, −1, 2, 1] = 6. O(n), O(1).'},
+{id:'x409',t:'cx',src:'extra',q:'The 0/1 knapsack DP table can be reduced from O(n·W) space to:',o:['O(1)','O(W) — one row, swept RIGHT to LEFT','O(n)','It cannot be reduced'],a:1,e:'Each row depends only on the previous; right-to-left sweep prevents reusing an item twice in the same row.'},
+{id:'x410',t:'cx',src:'extra',q:'Which problem is NOT typically solved with dynamic programming?',o:['Longest common subsequence','Binary search','Edit distance','0/1 knapsack'],a:1,e:'Binary search is pure divide & conquer — its subproblems never overlap.'},
+{id:'x411',t:'cx',src:'extra',q:'Memoized Fibonacci computes fib(n) in:',o:['O(2ⁿ)','O(n) time — each state computed once','O(log n)','O(n²)'],a:1,e:'n distinct states × O(1) work each. (O(log n) exists via matrix exponentiation but that is not memoization.)'},
+/* ---- HARD SET: Python ---- */
+{id:'x412',t:'py',src:'extra',q:'What is printed?',code:'print(7 // 2, -7 // 2)',o:['3 -3','3 -4','3.5 -3.5','4 -4'],a:1,e:'// floors toward MINUS INFINITY: −7//2 = −4 (C would truncate to −3). Python’s % follows the divisor’s sign too.'},
+{id:'x413',t:'py',src:'extra',q:'What is printed?',code:'s = "python"\nprint(s[::-1])',o:['python','nohtyp','nohty','error'],a:1,e:'[::-1] is THE reverse idiom — step −1 walks the string backwards.'},
+{id:'x414',t:'py',src:'extra',q:'What is printed?',code:'a = [1, 2, 3]\nb = a\nb.append(4)\nprint(len(a))',o:['3','4','Error','None'],a:1,e:'b = a copies the REFERENCE — one list, two names. Same trap as Java arrays. Use a[:] or a.copy() for a real copy.'},
+{id:'x415',t:'py',src:'extra',q:'What is printed?',code:'a = [1, 2, 3]\nc = a[:]\nc.append(9)\nprint(a, c)',o:['[1, 2, 3, 9] [1, 2, 3, 9]','[1, 2, 3] [1, 2, 3, 9]','[1, 2, 3] [1, 2, 3]','Error'],a:1,e:'a[:] makes a (shallow) COPY — c is independent of a.'},
+{id:'x416',t:'py',src:'extra',q:'What is printed?',code:'print([x * x for x in range(4)])',o:['[1, 4, 9, 16]','[0, 1, 4, 9]','[0, 1, 2, 3]','[1, 2, 3, 4]'],a:1,e:'range(4) = 0,1,2,3 (end exclusive); squares → [0,1,4,9].'},
+{id:'x417',t:'py',src:'extra',q:'What is printed?',code:'print(list(range(1, 10, 3)))',o:['[1, 4, 7]','[1, 4, 7, 10]','[3, 6, 9]','[1, 3, 5, 7, 9]'],a:0,e:'Start 1, step 3, stop BEFORE 10 → 1, 4, 7.'},
+{id:'x418',t:'py',src:'extra',q:'What is printed?',code:'d = {"x": 1, "x": 2}\nprint(d)',o:['{"x": 1}','{"x": 2} — the LAST duplicate key wins','{"x": 3}','Error'],a:1,e:'Dict keys are unique; a literal with a repeated key silently keeps the last value.'},
+{id:'x419',t:'py',src:'extra',q:'What happens?',code:'t = (1, 2, 3)\nt[0] = 5',o:['t becomes (5, 2, 3)','TypeError — tuples are IMMUTABLE','t becomes (5,)','Nothing'],a:1,e:'Tuples cannot be modified after creation (like Java Strings). Lists are the mutable cousin.'},
+{id:'x420',t:'py',src:'extra',q:'What is printed?',code:'def f(item, box=[]):\n    box.append(item)\n    return box\nf(1)\nprint(f(2))',o:['[2]','[1, 2] — the default list is created ONCE and shared across calls','[[1], [2]]','Error'],a:1,e:'THE classic Python trap: default arguments are evaluated at function DEFINITION, not per call. Fix: box=None inside.'},
+{id:'x421',t:'py',src:'extra',q:'What is printed?',code:'print("2" * 3, 10 / 5)',o:['6 2','222 2.0','222 2','6 2.0'],a:1,e:'String × int repeats → "222"; / is ALWAYS true division → 2.0 (a float), unlike C/Java.'},
+/* ---- HARD SET: vectors, matrices, linear algebra ---- */
+{id:'x422',t:'math',src:'extra',q:'The dot product of (1, 2, 3) and (4, −5, 6) is:',o:['0','12','32','(4, −10, 18)'],a:1,e:'4 − 10 + 18 = 12. The vector option is the trap — a dot product is a SCALAR.'},
+{id:'x423',t:'math',src:'extra',q:'Dot product vs cross product — the outputs are, respectively:',o:['vector; scalar','scalar; a VECTOR perpendicular to both inputs','both scalars','both vectors'],a:1,e:'a·b = number (any dimension); a×b = perpendicular vector (3D only, right-hand rule).'},
+{id:'x424',t:'math',src:'extra',q:'For unit vectors: i × j = ?',o:['0','k','−k','j'],a:1,e:'Cyclic: i×j=k, j×k=i, k×i=j. Reversed order negates: j×i = −k (anti-commutative).'},
+{id:'x425',t:'math',src:'extra',q:'|a × b| equals:',o:['|a||b| cos θ','|a||b| sin θ — the AREA of the parallelogram spanned by a and b','a·b','always 1'],a:1,e:'cos goes with the DOT product; sin with the CROSS. Parallel vectors → sin 0 → a×b = 0.'},
+{id:'x426',t:'math',src:'extra',q:'The determinant of a TRIANGULAR (or diagonal) matrix equals:',o:['0','The PRODUCT of its diagonal entries','The sum of its diagonal (trace)','1'],a:1,e:'Instant answer — no cofactor expansion needed. The trace-option is the deliberate confusion.'},
+{id:'x427',t:'math',src:'extra',q:'The eigenvalues of [[3, 1], [0, 2]] are:',o:['3 and 2 — triangular ⇒ eigenvalues are the diagonal entries','1 and 2','5 and 6','Cannot be found'],a:0,e:'Check: trace 5 = 3+2 ✓, det 6 = 3·2 ✓. trace = Σλ, det = Πλ — always.'},
+{id:'x428',t:'math',src:'extra',q:'For any square matrix, the trace and determinant equal, respectively:',o:['product and sum of eigenvalues','SUM and PRODUCT of the eigenvalues','largest and smallest eigenvalue','rank and nullity'],a:1,e:'trace(A) = Σλᵢ, det(A) = Πλᵢ. A zero eigenvalue ⇔ det 0 ⇔ singular.'},
+{id:'x429',t:'math',src:'extra',q:'A square matrix is INVERTIBLE if and only if:',o:['It is symmetric','det ≠ 0 (equivalently: full rank, rows independent, no zero eigenvalue)','Its trace is nonzero','It is triangular'],a:1,e:'One concept, many phrasings — exams pick any of the equivalent forms.'},
+{id:'x430',t:'math',src:'extra',q:'Cosine similarity between vectors a and b is:',o:['a·b','a·b / (‖a‖‖b‖) — the normalized dot product, the standard ML similarity measure','‖a−b‖','a×b'],a:1,e:'Ranges [−1, 1]; 1 = same direction. Used for documents/embeddings — expect it on an AI-program exam.'},
+{id:'x431',t:'math',src:'extra',q:'PCA (principal component analysis) finds its components as:',o:['Rows of the dataset','EIGENVECTORS of the covariance matrix (eigenvalues = variance captured)','Random projections','The dataset’s modes'],a:1,e:'Directions of maximum variance = top eigenvectors of the (symmetric) covariance matrix.'},
+/* ---- HARD SET: probability & statistics ---- */
+{id:'x432',t:'math',src:'extra',q:'Standard deviation belongs to which branch of statistics?',o:['Inferential statistics','DESCRIPTIVE statistics — a measure of dispersion (spread)','Probability theory only','Regression'],a:1,e:'Descriptive: mean/median/mode (center) + range/variance/SD (spread). It then re-appears in inference as σ and standard error.'},
+{id:'x433',t:'math',src:'extra',q:'A disease affects 1% of people. A test detects it 90% of the time but false-positives 10% of the time. P(disease | positive) ≈ ?',o:['90%','8.3% — Bayes: 0.009 / (0.009 + 0.099)','50%','1%'],a:1,e:'True positives 0.9×0.01 = 0.009; false positives 0.1×0.99 = 0.099. Rare condition ⇒ most positives are false. The classic counterintuitive Bayes result.'},
+{id:'x434',t:'math',src:'extra',q:'X ~ Binomial(n=100, p=0.2). Mean and variance are:',o:['20 and 20','20 and 16 — np and npq','80 and 16','20 and 4'],a:1,e:'Mean np = 20; variance npq = 100·0.2·0.8 = 16 (SD 4). npq, not np — the trap.'},
+{id:'x435',t:'math',src:'extra',q:'For a normal distribution, about what fraction of data lies within μ ± 2σ?',o:['68%','95%','99.7%','50%'],a:1,e:'The 68–95–99.7 rule for 1σ, 2σ, 3σ. Above μ+2σ: ≈ 2.5% (half the remaining 5%).'},
+{id:'x436',t:'math',src:'extra',q:'Scores: μ = 70, σ = 10. The z-score of 85 is:',o:['0.5','1.5','15','2'],a:1,e:'z = (x − μ)/σ = 15/10 = 1.5 — “how many SDs above the mean.”'},
+{id:'x437',t:'math',src:'extra',q:'The number of distinct arrangements of the letters of SUCCESS is:',o:['5040','420','840','2520'],a:1,e:'7 letters with S×3 and C×2 → 7!/(3!·2!) = 5040/12 = 420. Divide by factorials of repeat counts.'},
+{id:'x438',t:'math',src:'extra',q:'A game pays 6 taka if a die shows 6; otherwise you pay 1 taka. Your expected gain per play is:',o:['0','+1/6 taka — favorable','−1/6 taka','+1 taka'],a:1,e:'E = 6·(1/6) + (−1)·(5/6) = 1 − 5/6 = 1/6. Expectation = probability-weighted average.'},
+{id:'x439',t:'math',src:'extra',q:'Box 1: 2 red, 3 blue. Box 2: 4 red, 1 blue. Pick a box at random, then a ball. P(red) = ?',o:['1/2','3/5','6/10 exactly equals option B','2/5'],a:1,e:'Total probability: ½·(2/5) + ½·(4/5) = 1/5 + 2/5 = 3/5.'},
+{id:'x440',t:'math',src:'extra',q:'In how many ways can 5 people sit around a CIRCULAR table?',o:['120','24','60','12'],a:1,e:'Circular = (n−1)! = 4! = 24 — rotations are the same seating. (A necklace that can flip: (n−1)!/2.)'},
+{id:'x441',t:'math',src:'extra',q:'Two people are chosen at random. P(they have DIFFERENT birthdays) (365-day year):',o:['1/365','364/365','363/365','1/2'],a:1,e:'The second person must miss one specific day: 364/365. The k-person birthday problem multiplies such factors down.'}
 ];
 
 /* ============ GENERATED DRILLS — unlimited, answers computed ============ */
@@ -1558,7 +1605,131 @@ const GEN = [
   const ans=Math.min(y, x+w);
   const r=numOpts(ans,[y===ans? x+w : y, x, w], true);
   return Object.assign({q:'RELAX step: dist[u] = '+x+', edge weight w(u,v) = '+w+', current dist[v] = '+y+'. After RELAX(u,v), dist[v] = ?',
-    e:'dist[v] = min('+y+', '+x+' + '+w+') = min('+y+', '+(x+w)+') = '+ans+'. Relaxation is the single primitive behind every shortest-path algorithm.'}, r); }}
+    e:'dist[v] = min('+y+', '+x+' + '+w+') = min('+y+', '+(x+w)+') = '+ans+'. Relaxation is the single primitive behind every shortest-path algorithm.'}, r); }},
+
+/* --- dynamic programming generators --- */
+{id:'gdpcoin', t:'cx', make:function(){ const coins=pick([[1,3,4],[1,2,5],[1,4,5],[1,3,5]]); const amt=ri(6,13);
+  const dp=[0]; for(let a=1;a<=amt;a++){ let best=Infinity;
+    coins.forEach(function(c){ if(c<=a && dp[a-c]+1<best) best=dp[a-c]+1; }); dp[a]=best; }
+  let g=0, rem=amt; const sorted=coins.slice().sort(function(x,y){return y-x;});
+  while(rem>0){ for(let i=0;i<sorted.length;i++){ if(sorted[i]<=rem){ rem-=sorted[i]; g++; break; } } }
+  const r=numOpts(dp[amt],[g, dp[amt]+1, dp[amt]+2]);
+  return Object.assign({q:'Using coins {'+coins.join(', ')+'}, the MINIMUM number of coins to make '+amt+' is:',
+    e:'DP over amounts gives '+dp[amt]+'. (Greedy largest-first would use '+g+' coin'+(g>1?'s':'')+' — '+(g===dp[amt]?'same here, but greedy is not reliable for arbitrary coin sets.':'WORSE. Greedy fails on non-canonical coin systems.')+')'}, r); }},
+{id:'gdpknap', t:'cx', make:function(){ const items=[]; for(let i=0;i<3;i++) items.push([ri(1,4), ri(2,9)]); const W=ri(4,7);
+  let best=0; for(let m=1;m<8;m++){ let w=0,v=0;
+    for(let i=0;i<3;i++) if(m&(1<<i)){ w+=items[i][0]; v+=items[i][1]; }
+    if(w<=W && v>best) best=v; }
+  const allv=items.reduce(function(a,it){return a+it[1];},0);
+  const r=numOpts(best,[allv, best-1, best+1]);
+  return Object.assign({q:'0/1 knapsack, capacity '+W+'. Items (weight, value): ('+items[0].join(',')+'), ('+items[1].join(',')+'), ('+items[2].join(',')+'). Maximum total value:',
+    e:'Check the subsets that fit within weight '+W+' — the best achievable value is '+best+'. dp[i][w] = max(skip, take).'}, r); }},
+{id:'gdplcs', t:'cx', make:function(){
+  function rs(n){ let s=''; for(let i=0;i<n;i++) s+=pick(['A','B','C']); return s; }
+  const a=rs(ri(5,6)), b=rs(ri(5,6));
+  const m=a.length, n2=b.length; const dp=[];
+  for(let i=0;i<=m;i++){ dp.push([]); for(let j=0;j<=n2;j++) dp[i].push(0); }
+  for(let i=1;i<=m;i++) for(let j=1;j<=n2;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+  const L=dp[m][n2];
+  const r=numOpts(L,[L+1, L-1, Math.min(m,n2)]);
+  return Object.assign({q:'The length of the Longest Common SUBSEQUENCE of "'+a+'" and "'+b+'" is:',
+    e:'Fill the DP table (match → diagonal+1, else max of up/left) → '+L+'. Subsequences may skip characters; substrings may not.'}, r); }},
+{id:'gdpstairs', t:'cx', make:function(){ const n=ri(4,10);
+  const f=[0,1,2]; for(let i=3;i<=n;i++) f.push(f[i-1]+f[i-2]);
+  const r=numOpts(f[n],[f[n-1], f[n]+f[n-1], n*2]);
+  return Object.assign({q:'You climb '+n+' stairs taking 1 or 2 steps at a time. How many distinct ways are there?',
+    e:'ways(n) = ways(n−1) + ways(n−2) — Fibonacci in disguise → '+f[n]+'.'}, r); }},
+{id:'gdpgrid', t:'cx', make:function(){ const m=ri(2,5), n2=ri(2,5);
+  function C(n,r){ let v=1; for(let i=0;i<r;i++) v=v*(n-i)/(i+1); return Math.round(v); }
+  const ans=C(m+n2-2, m-1);
+  const r=numOpts(ans,[m*n2, C(m+n2-1,m-1), ans+2]);
+  return Object.assign({q:'How many paths lead from the top-left to the bottom-right of a '+m+'×'+n2+' grid, moving only RIGHT or DOWN?',
+    e:'dp[i][j] = dp[i−1][j] + dp[i][j−1], or directly C(m+n−2, m−1) = C('+(m+n2-2)+','+(m-1)+') = '+ans+'.'}, r); }},
+/* --- Python generators --- */
+{id:'gpyslice', t:'py', make:function(){ const w=pick(['python','stack','matrix','tensor','lambda','kernel']);
+  const kind=pick(['ab','rev','step','neg']);
+  let expr, res;
+  if(kind==='ab'){ const a=ri(0,2); const b=ri(a+1, w.length); expr='s['+a+':'+b+']'; res=w.slice(a,b); }
+  else if(kind==='rev'){ expr='s[::-1]'; res=w.split('').reverse().join(''); }
+  else if(kind==='step'){ expr='s[::2]'; res=w.split('').filter(function(_,i){return i%2===0;}).join(''); }
+  else { expr='s[-2]'; res=w[w.length-2]; }
+  const r=strOpts(res, [w, w.slice(1), res.split('').reverse().join(''), w[1]].filter(function(x){return x!==res;}));
+  return Object.assign({q:'What is printed?', code:'s = "'+w+'"\nprint('+expr+')',
+    e:'Slicing: start inclusive, end EXCLUSIVE; negative indices count from the end; [::-1] reverses; [::2] takes every second character. → "'+res+'"'}, r); }},
+{id:'gpyops', t:'py', make:function(){ const kind=pick(['floordiv','pow','truediv']);
+  if(kind==='floordiv'){ const b=ri(2,6); const a=b*ri(2,5)+ri(1,b-1);
+    const correct=Math.floor(a/b)+' '+(a%b);
+    const r=strOpts(correct, [(a/b).toFixed(1)+' '+(a%b), Math.ceil(a/b)+' '+(a%b), Math.floor(a/b)+' 0']);
+    return Object.assign({q:'What is printed?', code:'print('+a+' // '+b+', '+a+' % '+b+')',
+      e:'// floors, % gives the remainder → '+correct+'.'}, r); }
+  if(kind==='pow'){ const k=ri(2,4); const base=pick([2,3]); const v=Math.pow(base,k);
+    const r=numOpts(v,[base*k, Math.pow(k,base), v*base]);
+    return Object.assign({q:'What is printed?', code:'print('+base+' ** '+k+')',
+      e:'** is the power operator: '+base+'^'+k+' = '+v+'.'}, r); }
+  const b=pick([2,4,5]); const a=b*ri(2,6);
+  const correct=(a/b)+'.0';
+  const r=strOpts(correct, [String(a/b), (a/b).toFixed(1)===''+(a/b)+'.0'? String(a/b+1) : (a/b).toFixed(1), String(Math.floor(a/b))]);
+  return Object.assign({q:'What is printed?', code:'print('+a+' / '+b+')',
+    e:'/ is ALWAYS true division in Python and returns a float → '+correct+' (not '+(a/b)+'). Use // for integer division.'}, r); }},
+{id:'gpylist', t:'py', make:function(){ const arr=sampleDistinct(3,1,9); const v=ri(10,99); const alias=pick([true,false]);
+  const res= alias ? fmt(arr.concat([v])) : fmt(arr);
+  const code='a = '+fmt(arr)+'\nb = '+(alias?'a':'a[:]')+'\nb.append('+v+')\nprint(a)';
+  const r=strOpts(res, [alias? fmt(arr) : fmt(arr.concat([v])), fmt([v].concat(arr)), fmt(arr.slice(1))]);
+  return Object.assign({q:'What is printed?', code:code,
+    e: alias ? 'b = a is an ALIAS — one list, two names → appending through b changes a → '+res+'.' :
+      'a[:] makes a COPY — b is independent, a stays '+res+'.'}, r); }},
+/* --- linear algebra generators --- */
+{id:'gdot', t:'math', make:function(){ const a=[ri(-5,6),ri(-5,6),ri(-5,6)], b=[ri(-5,6),ri(-5,6),ri(-5,6)];
+  const d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const r=numOpts(d,[Math.abs(d), d+2, a[0]*b[0]], true);
+  return Object.assign({q:'The dot product of ('+a.join(', ')+') and ('+b.join(', ')+') is:',
+    e:'Σaᵢbᵢ = '+(a[0]*b[0])+' + '+(a[1]*b[1])+' + '+(a[2]*b[2])+' = '+d+'. '+(d===0?'Zero ⇒ the vectors are ORTHOGONAL.':'A scalar, not a vector.')}, r); }},
+{id:'gcross', t:'math', make:function(){ const a=[ri(-3,4),ri(-3,4),ri(-3,4)], b=[ri(-3,4),ri(-3,4),ri(-3,4)];
+  const c=[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+  function v(x){ return '('+x.join(', ')+')'; }
+  const correct=v(c);
+  const r=strOpts(correct, [v(c.map(function(x){return -x;})), v([c[1],c[0],c[2]]), v([c[0],c[1],-c[2]])]);
+  return Object.assign({q:'The cross product ('+a.join(', ')+') × ('+b.join(', ')+') is:',
+    e:'Determinant expansion: (a₂b₃−a₃b₂, a₃b₁−a₁b₃, a₁b₂−a₂b₁) = '+correct+' — a VECTOR perpendicular to both. Reversing the order negates it.'}, r); }},
+{id:'gmag', t:'math', make:function(){ const T=pick([[3,4,0,5],[6,8,0,10],[1,2,2,3],[2,3,6,7],[4,4,7,9],[2,6,9,11],[8,9,12,17],[5,12,0,13]]);
+  const r=numOpts(T[3],[T[0]+T[1]+T[2], T[3]+1, T[3]-1]);
+  return Object.assign({q:'The magnitude ‖v‖ of the vector ('+T[0]+', '+T[1]+', '+T[2]+') is:',
+    e:'√('+T[0]+'² + '+T[1]+'² + '+T[2]+'²) = √'+(T[3]*T[3])+' = '+T[3]+'.'}, r); }},
+{id:'geig', t:'math', make:function(){ const kind=pick(['tri','tracedet']);
+  if(kind==='tri'){ let a=ri(1,9), b=ri(1,9); while(b===a) b=ri(1,9); const c=ri(1,5);
+    const correct=Math.min(a,b)+' and '+Math.max(a,b);
+    const r=strOpts(correct, [c+' and '+a, (a+b)+' and '+(a*b), a+' and '+c]);
+    return Object.assign({q:'The eigenvalues of the matrix [['+a+', '+c+'], [0, '+b+']] are:',
+      e:'TRIANGULAR matrix ⇒ eigenvalues = diagonal entries → '+correct+'. Check: trace '+(a+b)+' = sum, det '+(a*b)+' = product.'}, r); }
+  const l1=ri(1,6); let l2=ri(1,6); while(l2===l1) l2=ri(1,6);
+  const wantTrace=pick([true,false]);
+  const ans= wantTrace ? l1+l2 : l1*l2;
+  const r=numOpts(ans,[wantTrace? l1*l2 : l1+l2, ans+1, Math.abs(l1-l2)]);
+  return Object.assign({q:'A 2×2 matrix has eigenvalues '+l1+' and '+l2+'. Its '+(wantTrace?'TRACE':'DETERMINANT')+' is:',
+    e:'trace = Σ eigenvalues = '+(l1+l2)+'; det = Π eigenvalues = '+(l1*l2)+'. → '+ans}, r); }},
+/* --- probability & statistics generators --- */
+{id:'gtotprob', t:'math', make:function(){ const T=pick([[2,3,4,1,'3/5'],[1,3,3,1,'1/2'],[2,2,3,1,'5/8'],[1,4,3,2,'2/5'],[2,4,3,3,'5/12']]);
+  const r=strOpts(T[4], ['1/2','2/5','3/5','5/8','5/12','1/4'].filter(function(x){return x!==T[4];}));
+  return Object.assign({q:'Box 1 holds '+T[0]+' red and '+T[1]+' blue balls; Box 2 holds '+T[2]+' red and '+T[3]+' blue. A box is chosen at random, then a ball. P(red) = ?',
+    e:'Total probability: ½·'+T[0]+'/'+(T[0]+T[1])+' + ½·'+T[2]+'/'+(T[2]+T[3])+' = '+T[4]+'.'}, r); }},
+{id:'gzscore', t:'math', make:function(){ const mu=ri(40,80); const sg=pick([5,10,15,20]); const z=pick([0.5,1,1.5,2,2.5]);
+  const x=mu+z*sg;
+  const correct=String(z);
+  const r=strOpts(correct, [String(z+0.5), String(z-0.5), String(x-mu)]);
+  return Object.assign({q:'Scores have mean '+mu+' and standard deviation '+sg+'. The z-score of '+x+' is:',
+    e:'z = (x − μ)/σ = ('+x+' − '+mu+')/'+sg+' = '+z+' — the score sits '+z+' SDs above the mean.'}, r); }},
+{id:'gbinom', t:'math', make:function(){ const T=pick([[100,0.2,20,16],[100,0.5,50,25],[200,0.1,20,18],[400,0.25,100,75],[50,0.2,10,8],[200,0.5,100,50]]);
+  const wantMean=pick([true,false]);
+  const ans= wantMean ? T[2] : T[3];
+  const r=numOpts(ans,[wantMean? T[3] : T[2], T[0]*T[1]*T[1], ans+2]);
+  return Object.assign({q:'X ~ Binomial(n = '+T[0]+', p = '+T[1]+'). The '+(wantMean?'MEAN':'VARIANCE')+' of X is:',
+    e:'Mean = np = '+T[2]+'; variance = npq = '+T[0]+'·'+T[1]+'·'+(1-T[1]).toFixed(2).replace(/0+$/,'').replace(/\.$/,'')+' = '+T[3]+'. → '+ans}, r); }},
+{id:'gletters', t:'math', make:function(){ const T=pick([['LEVEL',30],['BANANA',60],['SUCCESS',420],['BALLOON',1260],['APPLE',60],['BOOK',12],['COFFEE',180]]);
+  const n=T[0].length; const F={4:24,5:120,6:720,7:5040};
+  const r=numOpts(T[1],[F[n], T[1]*2, Math.floor(T[1]/2)]);
+  return Object.assign({q:'How many distinct arrangements can be made from all the letters of "'+T[0]+'"?',
+    e:'n!/(repeats!) — divide '+n+'! = '+F[n]+' by the factorial of each repeated letter’s count → '+T[1]+'.'}, r); }}
 ];
 const GENT={};
 GEN.forEach(function(f){ GENT['g:'+f.id]=f.t; });
