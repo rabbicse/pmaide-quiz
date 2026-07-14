@@ -123,6 +123,7 @@ li{margin:.22em 0}
   <nav class="tabs">
     <button data-tab="study" class="active">Study</button>
     <button data-tab="quiz">Quiz</button>
+    <button data-tab="review">Review</button>
     <button data-tab="status">Status</button>
   </nav>
 </header>
@@ -187,6 +188,11 @@ li{margin:.22em 0}
   </div>
 
   <div id="quiz-result" class="hide"></div>
+</section>
+
+<!-- ============ REVIEW (my mistakes) ============ -->
+<section id="tab-review" class="hide">
+  <div id="review-body"></div>
 </section>
 
 <!-- ============ STATUS ============ -->
@@ -1817,6 +1823,23 @@ const STUDY = {
 cx: `
 <h2>Complexity &amp; Algorithms</h2>
 <p class="small muted">The heaviest-tested area per your last attempt. Own this table.</p>
+<h3>🐣 Beginner basics — what Big-O actually means</h3>
+<p>Big-O answers ONE question: <strong>if the input gets bigger, how much more work does the algorithm do?</strong> It counts STEPS, not seconds.</p>
+<p>Count concretely first. This loop:</p>
+<pre>for (i = 0; i < n; i++)
+    for (j = 0; j < n; j++)
+        count++;</pre>
+<p>With n = 4: the outer loop runs 4 times, and EACH time the inner loop runs 4 times → count++ happens 4×4 = 16 times. With n = 10 → 100 times. The work grows like n² → we say <strong>O(n²)</strong>.</p>
+<p>Why we drop constants: an algorithm doing 3n²+10n+7 steps — at n = 1000 that is 3,010,007 steps, and 3,000,000 of them come from the n² part. Only the biggest term matters for large n, and the ×3 doesn't change the SHAPE of growth.</p>
+<p>Why it matters, in real numbers (at 10⁸ steps/second, n = 100,000):</p>
+<div class="tablewrap"><table>
+<tr><th>Growth</th><th>Steps</th><th>Time</th></tr>
+<tr><td>O(n)</td><td>10⁵</td><td>0.001 s</td></tr>
+<tr><td>O(n log n)</td><td>~1.7×10⁶</td><td>0.017 s</td></tr>
+<tr><td>O(n²)</td><td>10¹⁰</td><td>100 seconds</td></tr>
+<tr><td>O(2ⁿ)</td><td>—</td><td>longer than the universe</td></tr>
+</table></div>
+<p>How to read ANY loop: ask "how many times does the innermost line run?" — multiply nested loop counts; a loop that DOUBLES its counter (i *= 2) runs only log₂n times because doubling reaches n fast (1,2,4,8,…,n is just log₂n numbers).</p>
 <h3>The growth ladder</h3>
 <p><code>O(1) &lt; O(log n) &lt; O(√n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</code></p>
 <h3>Loop patterns → complexity</h3>
@@ -1895,6 +1918,17 @@ cx: `
 </ul>`,
 dsa: `
 <h2>Data Structures</h2>
+<h3>🐣 Beginner basics — what these things actually are</h3>
+<ul>
+<li><strong>Array</strong> = a row of numbered lockers. Locker #7 is opened instantly (the computer just calculates its address) → access O(1). But inserting into the middle means shifting every locker after it → O(n).</li>
+<li><strong>Linked list</strong> = a treasure hunt: each node holds a value AND the address of the next node. To reach item #7 you must follow 7 clues → access O(n). But if you're already standing at a node, splicing a new one in is just rewriting two addresses → O(1).</li>
+<li><strong>Stack</strong> = a pile of plates. You can only add or remove at the TOP → Last In, First Out (LIFO). This is why "undo" and function calls use stacks: the most recent thing is handled first.</li>
+<li><strong>Queue</strong> = a ticket line. Join at the back, served at the front → First In, First Out (FIFO). Printers, BFS, schedulers.</li>
+<li><strong>Hash table</strong> = labeled pigeonholes. A formula (the hash function) converts a key like "rahim" into a slot number, so lookup is one calculation → O(1) on average. Two keys landing in the same slot = a COLLISION → chain them or probe the next slot.</li>
+<li><strong>Binary search tree</strong> = a decision ladder: everything smaller goes left, larger goes right. Each step throws away half the remaining tree → find anything in ~log₂n steps... IF the tree is balanced. Insert sorted data and it degenerates into a chain (a disguised linked list) → O(n). Balanced trees (AVL, red-black) exist to prevent exactly that.</li>
+<li><strong>Heap</strong> = a tournament bracket stored in an array: every parent beats its children. The champion (min or max) is always at the top → peek O(1). It does NOT keep everything sorted — only the parent-child promise.</li>
+</ul>
+<p>Once these pictures are solid, the cost table below stops being memorization — each cell is just the picture's consequence.</p>
 <h3>Operation costs</h3>
 <div class="tablewrap"><table>
 <tr><th>Structure</th><th>Access</th><th>Search</th><th>Insert</th><th>Delete</th></tr>
@@ -1957,6 +1991,34 @@ dsa: `
 </ul>`,
 c: `
 <h2>C / C++</h2>
+<h3>🐣 Beginner basics — how to trace code like the machine does</h3>
+<p>Never trace in your head. Make a <strong>variable table</strong> and execute one line at a time, exactly like the CPU:</p>
+<pre>int a = 1, b = 2;
+int t = ++a + b++;
+printf("%d %d %d", t, a, b);
+
+line              | a | b | t
+------------------|---|---|---
+int a=1, b=2      | 1 | 2 | -
+++a  (pre: change | 2 | 2 | -
+      THEN use →2)|   |   |
+b++  (post: use 2 | 2 | 3 | -
+      THEN change)|   |   |
+t = 2 + 2         | 2 | 3 | 4   → prints "4 2 3"</pre>
+<p><strong>What a pointer actually is:</strong> every variable lives at an ADDRESS (like a house number). A pointer is a variable whose VALUE is another variable's address.</p>
+<pre>int x = 10;       // x lives at, say, address 1000
+int *p = &x;      // p holds 1000  (& means "address of")
+*p = 20;          // * means "go to that address" → x is now 20</pre>
+<p>So <code>*p</code> and <code>x</code> are the SAME box reached two ways. <code>p + 1</code> doesn't add 1 to the number — it moves to the NEXT int (address 1004, because ints are 4 bytes). That is all pointer arithmetic is.</p>
+<p><strong>Memory picture</strong> (where things live):</p>
+<pre>┌───────────────┐
+│ code (text)   │  the program itself
+│ globals (data)│  global / static variables
+│ heap ↓        │  malloc / new  — YOU must free
+│   ...free...  │
+│ stack ↑       │  local variables — freed automatically
+└───────────────┘</pre>
+<p>Now the traps below will read as consequences, not arbitrary facts.</p>
 <h3>Output-tracing traps (most exam questions live here)</h3>
 <ul>
 <li><code>++i</code> increments then uses; <code>i++</code> uses then increments. <code>t = ++a + b++</code> with a=1,b=2 → 2+2 = 4.</li>
@@ -2038,6 +2100,16 @@ c: `
 </ul>`,
 java: `
 <h2>Java</h2>
+<h3>🐣 Beginner basics — objects are reached by remote controls</h3>
+<p>In Java, a variable of object type never holds the object itself — it holds a <strong>reference</strong> (think: a TV remote). The object sits on the heap; the variable is just a remote pointing at it.</p>
+<pre>int[] a = {1, 2, 3};   // a = remote to the array
+int[] b = a;            // COPY THE REMOTE — same TV!
+b[0] = 9;               // change through b...
+System.out.println(a[0]); // 9 — a sees it (same array)</pre>
+<p><strong>Pass-by-value with remotes:</strong> calling a method photocopies the remote. Pressing buttons on the copy (mutating: <code>arr[0]=9</code>) affects the shared TV. But pointing the COPY at a different TV (<code>arr = new int[]{...}</code>) changes nothing for the caller — they still hold the old remote.</p>
+<p><strong>== vs .equals():</strong> <code>==</code> asks "same remote?" (same object); <code>.equals()</code> asks "same content on screen?". Two <code>new String("hi")</code> are two different remotes to identical content → == false, equals true.</p>
+<p><strong>Immutable Strings:</strong> a String's content can never change. <code>s.toUpperCase()</code> doesn't shout at s — it builds a NEW string and hands it back; if you don't catch it in a variable, it's lost and s is untouched.</p>
+<p>With these three pictures — remotes, photocopied remotes, unchangeable strings — most Java exam questions answer themselves. Details:</p>
 <ul>
 <li><strong>Platform independence:</strong> javac → bytecode (.class) → JVM interprets/JITs. Write once, run anywhere.</li>
 <li><strong>main:</strong> <code>public static void main(String[] args)</code> — exact signature.</li>
@@ -2078,6 +2150,16 @@ java: `
 </ul>`,
 db: `
 <h2>DBMS</h2>
+<h3>🐣 Beginner basics — tables, keys, and why normalization exists</h3>
+<p>A relational database is a set of <strong>spreadsheet-like tables</strong>. Each row = one record (a "tuple"); each column = one attribute.</p>
+<p><strong>Primary key</strong> = the column that uniquely identifies each row — like your National ID: no two rows share it, and it can't be empty. <strong>Foreign key</strong> = a column that stores ANOTHER table's key, linking the sheets: an Orders row stores the CustomerID of the customer who ordered.</p>
+<p><strong>Why normalization?</strong> Look at this bad table:</p>
+<pre>StudentID | Name  | DeptID | DeptName | DeptPhone
+101       | Rahim | D1     | CSE      | 555-1234
+102       | Mita  | D1     | CSE      | 555-1234
+103       | Karim | D1     | CSE      | 555-1234</pre>
+<p>The CSE phone number is stored 3 times. If it changes and you update only two rows → the database now LIES (update anomaly). Delete the last CSE student → the department's data vanishes entirely (deletion anomaly). The fix: split into Students(StudentID, Name, DeptID) and Departments(DeptID, DeptName, DeptPhone) — each fact stored ONCE, joined back when needed. That splitting discipline, applied in stages, IS 1NF → 2NF → 3NF.</p>
+<p><strong>SQL is just sentences:</strong> <code>SELECT name FROM Students WHERE dept = 'CSE' ORDER BY name;</code> reads as "give me the names, from the Students sheet, only CSE rows, alphabetized." GROUP BY folds rows into groups (one row per dept); HAVING filters those GROUPS after folding — which is why aggregates like COUNT can't go in WHERE (rows haven't been folded yet).</p>
 <h3>Keys</h3>
 <ul>
 <li>Super key ⊇ candidate key (minimal super key) → one becomes the primary key (unique + NOT NULL).</li>
@@ -2127,6 +2209,13 @@ db: `
 </ul>`,
 math: `
 <h2>Mathematics &amp; Statistics</h2>
+<h3>🐣 Beginner basics — probability as counting worlds</h3>
+<p>Probability = <strong>(ways it can happen) ÷ (all equally likely ways)</strong>. That's the whole subject; everything else is counting technique.</p>
+<p>Two dice: list the worlds — 6 faces × 6 faces = 36 equally likely pairs. How many give sum 7? (1,6)(2,5)(3,4)(4,3)(5,2)(6,1) = 6 worlds → P = 6/36 = 1/6. When stuck, LIST or COUNT the worlds — never guess.</p>
+<p><strong>The one trick worth half the marks — "at least one":</strong> counting the worlds with at least one head is messy; counting the worlds with NONE is easy. P(at least one) = 1 − P(none). Two coins: P(no head) = ¼ → P(≥1 head) = ¾.</p>
+<p><strong>AND vs OR:</strong> independent events AND together by MULTIPLYING (both must happen: 0.8 × 0.8 = 0.64); exclusive events OR together by ADDING. Drawing WITHOUT replacement changes the second fraction: both red from 3R2B = (3/5)·(2/4) — four balls left, one fewer red.</p>
+<p><strong>Mean vs median in plain words:</strong> mean = share everything equally; median = line everyone up, take the middle person. One billionaire in the room drags the MEAN up massively but barely moves the median — that's why "which is robust to outliers" = median.</p>
+<p><strong>Standard deviation in plain words:</strong> "on average, how far is a value from the mean?" Data 2,4,4,4,5,5,7,9: mean 5; distances² are 9,1,1,1,0,0,4,16 → average 4 (the variance) → SD = √4 = 2. Adding 10 to everyone shifts the group but not the SPREAD → SD unchanged; doubling everyone doubles the spread → SD ×2.</p>
 <h3>Probability</h3>
 <ul>
 <li>P(A∪B) = P(A)+P(B)−P(A∩B). Independent: P(A∩B) = P(A)P(B).</li>
@@ -2349,10 +2438,18 @@ let store;
 try { store = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ store = {}; }
 store.qstats = store.qstats || {};   // id -> {r, w}
 store.sessions = store.sessions || []; // {ts, mode, topic, score, total}
+store.misses = store.misses || [];   // snapshots of every wrongly-answered question
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
-function recordAnswer(id, ok){
-  const s = store.qstats[id] || (store.qstats[id] = {r:0, w:0});
-  ok ? s.r++ : s.w++; save();
+function recordAnswer(q, ok, pick){
+  const s = store.qstats[q.id] || (store.qstats[q.id] = {r:0, w:0});
+  if(ok){ s.r++; }
+  else {
+    s.w++;
+    store.misses.push({ id:q.id, t:q.t, src:q.src, q:q.q, code:q.code||null, o:q.o, a:q.a, e:q.e,
+                        pick:(typeof pick==='number'? pick : null), ts:Date.now() });
+    if(store.misses.length > 400) store.misses = store.misses.slice(-400);
+  }
+  save();
 }
 
 /* ================= HELPERS ================= */
@@ -2370,8 +2467,9 @@ function fmtTime(s){ const m=Math.floor(s/60), r=s%60; return m+':'+String(r).pa
 document.querySelectorAll('nav.tabs button').forEach(b=>{
   b.addEventListener('click', ()=>{
     document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('active', x===b));
-    ['study','quiz','status'].forEach(t=> $('tab-'+t).classList.toggle('hide', t!==b.dataset.tab));
+    ['study','quiz','review','status'].forEach(t=> $('tab-'+t).classList.toggle('hide', t!==b.dataset.tab));
     if(b.dataset.tab==='status') renderStatus();
+    if(b.dataset.tab==='review') renderReview();
   });
 });
 
@@ -2536,7 +2634,7 @@ function pickOption(idx){
     if(session.answered[session.i]) return;
     session.picks[session.i]=idx;
     session.answered[session.i]=true;
-    recordAnswer(q.id, idx===q.a);
+    recordAnswer(q, idx===q.a, idx);
     renderQ();
   } else {
     session.picks[session.i]=idx;
@@ -2582,7 +2680,7 @@ function gradeMock(){
   session.qs.forEach((q,i)=>{
     const ok = session.picks[i]===q.a;
     if(ok) right++;
-    recordAnswer(q.id, ok);
+    recordAnswer(q, ok, session.picks[i]);
     const pt = perTopic[q.t] || (perTopic[q.t]={r:0,n:0});
     pt.n++; if(ok) pt.r++;
   });
@@ -2724,5 +2822,67 @@ function renderStatus(){
 }
 function tile(num,lbl,good){
   return '<div class="tile"><div class="num"'+(good===true?' style="color:var(--accent)"':'')+'>'+num+'</div><div class="lbl">'+lbl+'</div></div>';
+}
+
+/* ================= REVIEW — my mistakes ================= */
+function renderReview(){
+  const body=$('review-body');
+  const miss=store.misses.slice().reverse(); // newest first
+  if(!miss.length){
+    body.innerHTML='<div class="card"><h2>My Mistakes</h2><p class="muted">Nothing here yet. Every question you answer WRONG — in practice or in a mock — is saved here automatically with its explanation, so your own errors become your study list. Go take a quiz.</p></div>';
+    return;
+  }
+  // group by category
+  const groups={};
+  miss.forEach(m=>{ const c=catOf(m); (groups[c]=groups[c]||[]).push(m); });
+  let html='<div class="card"><h2 style="margin-bottom:2px">My Mistakes ('+miss.length+')</h2>'
+    +'<p class="small muted" style="margin:4px 0 10px">Your personal failure list — recorded automatically. Re-drill it until empty, and export it to keep a copy anywhere.</p>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    +'<button class="btn" id="rev-retry">Practice these again</button>'
+    +'<button class="btn secondary" id="rev-export">Export as file</button>'
+    +'<button class="btn subtle" id="rev-clear">Clear all</button></div></div>';
+  Object.keys(groups).sort((a,b)=>groups[b].length-groups[a].length).forEach(c=>{
+    const g=groups[c];
+    html+='<div class="card"><div class="eyebrow">'+CATS[c]+' — '+g.length+' miss'+(g.length>1?'es':'')+'</div>';
+    g.slice(0,30).forEach(m=>{
+      html+='<div class="review-item"><div class="small" style="font-weight:600;white-space:pre-wrap">'+esc(m.q)+'</div>'
+        +(m.code?'<pre>'+esc(m.code)+'</pre>':'')
+        +'<div class="small" style="margin-top:6px">Your answer: <strong>'+(m.pick===null||m.pick===undefined?'— (blank)':String.fromCharCode(65+m.pick)+'. '+esc(m.o[m.pick]))+'</strong>'
+        +' · Correct: <strong>'+String.fromCharCode(65+m.a)+'. '+esc(m.o[m.a])+'</strong></div>'
+        +'<div class="small muted" style="margin-top:4px">'+esc(m.e)+'</div>'
+        +'<div class="small muted" style="margin-top:2px">'+new Date(m.ts).toLocaleDateString()+'</div></div>';
+    });
+    if(g.length>30) html+='<p class="small muted">…and '+(g.length-30)+' older in this category.</p>';
+    html+='</div>';
+  });
+  body.innerHTML=html;
+  $('rev-retry').addEventListener('click', ()=>{
+    const seen=new Set(); const pool=[];
+    miss.forEach(m=>{ const k=m.q+'|'+(m.code||''); if(!seen.has(k)){ seen.add(k); pool.push(m); } });
+    const qs=shuffle(pool).slice(0, Math.min(25, pool.length)).map(m=>({id:m.id, t:m.t, src:m.src, q:m.q, code:m.code||undefined, o:m.o, a:m.a, e:m.e}));
+    if(!qs.length) return;
+    session={mode:'practice', topic:'all', qs:qs, i:0, picks:new Array(qs.length).fill(null), answered:new Array(qs.length).fill(false)};
+    document.querySelector('nav.tabs button[data-tab="quiz"]').click();
+    startPlay();
+  });
+  $('rev-export').addEventListener('click', ()=>{
+    let md='# My Mistakes — PMAIDE prep\nExported '+new Date().toLocaleString()+' · '+miss.length+' wrong answers\n';
+    Object.keys(groups).forEach(c=>{
+      md+='\n## '+CATS[c]+' ('+groups[c].length+')\n';
+      groups[c].forEach(m=>{
+        md+='\n**Q:** '+m.q+'\n';
+        if(m.code) md+='```\n'+m.code+'\n```\n';
+        md+='- Your answer: '+(m.pick===null||m.pick===undefined?'(blank)':m.o[m.pick])+'\n- Correct: **'+m.o[m.a]+'**\n- Why: '+m.e+'\n';
+      });
+    });
+    const a=document.createElement('a');
+    a.href='data:text/markdown;charset=utf-8,'+encodeURIComponent(md);
+    a.download='my-mistakes.md';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $('rev-clear').addEventListener('click', ()=>{
+    if(!confirm('Erase the whole mistake list?')) return;
+    store.misses=[]; save(); renderReview();
+  });
 }
 </script>
